@@ -317,16 +317,15 @@ a { color: var(--accent-cyan); text-decoration: none; }
 }
 .select:focus { outline: none; border-color: var(--accent-indigo); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
 .select option {
-    background: #1E293B;
+    background-color: #1E293B;
     color: #F8FAFC;
     padding: 8px 12px;
-    border: none;
 }
 .select option:hover,
 .select option:focus,
 .select option:checked {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(6, 182, 212, 0.2));
-    color: #fff;
+    background-color: #0F172A;
+    color: #6366F1;
 }
 .select[multiple] {
     min-height: 120px;
