@@ -9,6 +9,14 @@ const CHART_COLORS = [
     '#A855F7', '#0EA5E9', '#D946EF', '#22D3EE', '#FB923C',
 ];
 
+// Global Chart settings
+if (window.Chart) {
+    Chart.defaults.font.family = "'Inter', 'Noto Sans TC', sans-serif";
+    if (Chart.defaults.plugins && Chart.defaults.plugins.datalabels) {
+        Chart.defaults.plugins.datalabels.display = false;
+    }
+}
+
 /* ---------- Navigation ---------- */
 function initNavigation() {
     const navItems = document.querySelectorAll('.nav-item');

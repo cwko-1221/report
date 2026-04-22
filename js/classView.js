@@ -154,7 +154,17 @@ const ClassView = {
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#94A3B8', font: { size: 11 } } } },
+                plugins: {
+                    legend: { labels: { color: '#94A3B8', font: { size: 11 } } },
+                    datalabels: {
+                        color: '#F8FAFC',
+                        font: { weight: 'bold', size: 10 },
+                        formatter: val => val > 0 ? val.toFixed(1) + '%' : '',
+                        anchor: 'end',
+                        align: 'start',
+                        offset: 4
+                    }
+                },
                 scales: {
                     x: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
                     y: { min: 0, max: 100, ticks: { color: '#64748B', callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' } }
@@ -224,7 +234,12 @@ const ClassView = {
                 responsive: true, maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'right', labels: { color: '#94A3B8', font: { size: 11 }, padding: 12 } },
-                    title: { display: true, text: `${subj.name} 分數分佈`, color: '#94A3B8', font: { size: 13 } }
+                    title: { display: true, text: `${subj.name} 分數分佈`, color: '#94A3B8', font: { size: 13 } },
+                    datalabels: {
+                        color: '#F8FAFC',
+                        font: { weight: 'bold', size: 12 },
+                        formatter: (val, ctx) => val > 0 ? val : ''
+                    }
                 },
                 cutout: '55%',
             }
@@ -266,7 +281,15 @@ const ClassView = {
                 indexAxis: 'y',
                 plugins: {
                     legend: { display: false },
-                    tooltip: { callbacks: { label: ctx => `${ctx.parsed.x.toFixed(1)}%` } }
+                    tooltip: { callbacks: { label: ctx => `${ctx.parsed.x.toFixed(1)}%` } },
+                    datalabels: {
+                        color: '#F8FAFC',
+                        font: { weight: 'bold', size: 11 },
+                        formatter: val => val > 0 ? val.toFixed(1) + '%' : '',
+                        anchor: 'end',
+                        align: 'start',
+                        offset: 4
+                    }
                 },
                 scales: {
                     x: { min: 0, max: 100, ticks: { color: '#64748B', callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' } },

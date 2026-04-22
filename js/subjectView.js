@@ -217,7 +217,14 @@ const SubjectView = {
             data: { labels, datasets },
             options: {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#94A3B8', font: { size: 10 } } } },
+                plugins: {
+                    legend: { labels: { color: '#94A3B8', font: { size: 10 } } },
+                    datalabels: {
+                        color: '#F8FAFC',
+                        font: { weight: 'bold', size: 11 },
+                        formatter: val => val > 0 ? val : ''
+                    }
+                },
                 scales: {
                     x: {
                         stacked: true,
