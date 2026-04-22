@@ -317,6 +317,10 @@ a { color: var(--accent-cyan); text-decoration: none; }
     padding-right: 32px;
 }
 .select:focus { outline: none; border-color: var(--accent-indigo); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+.select option {
+    background-color: #1E293B;
+    color: #F8FAFC;
+}
 .select[multiple] {
     min-height: 120px;
     background-image: none;

@@ -12,7 +12,8 @@ const CHART_COLORS = [
 // Global Chart settings
 if (window.Chart) {
     Chart.defaults.font.family = "'Inter', 'Noto Sans TC', sans-serif";
-    if (Chart.defaults.plugins && Chart.defaults.plugins.datalabels) {
+    if (window.ChartDataLabels) {
+        Chart.register(ChartDataLabels);
         Chart.defaults.plugins.datalabels.display = false;
     }
 }
