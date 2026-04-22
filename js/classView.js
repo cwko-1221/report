@@ -270,7 +270,7 @@ const ClassView = {
                 const num = DataManager.getNumericScore(student.scores[subj.name]?.total);
                 if (num === null) continue;
                 total++;
-                if (subj.maxScore && (num / subj.maxScore) >= 0.5) pass++;
+                if (subj.maxScore && (num / subj.maxScore) >= 0.6) pass++;
             }
             return total > 0 ? (pass / total * 100) : 0;
         });
@@ -280,7 +280,7 @@ const ClassView = {
             data: {
                 labels,
                 datasets: [{
-                    label: '及格率 (≥50%)',
+                    label: '及格率 (≥60%)',
                     data: passRates,
                     backgroundColor: passRates.map(r => r >= 80 ? CHART_COLORS[4] + 'AA' : r >= 60 ? CHART_COLORS[2] + 'AA' : CHART_COLORS[3] + 'AA'),
                     borderColor: passRates.map(r => r >= 80 ? CHART_COLORS[4] : r >= 60 ? CHART_COLORS[2] : CHART_COLORS[3]),
@@ -352,7 +352,7 @@ const ClassView = {
             html += `<tr><td>${i + 1}</td><td>${r.classNo}</td><td>${r.name}</td>`;
             for (const subj of numSubjects) {
                 const v = r.subjScores[subj.name];
-                const cls = v >= 80 ? 'high' : v < 50 ? 'low' : '';
+                const cls = v >= 80 ? 'high' : v < 60 ? 'low' : '';
                 html += `<td class="num ${cls}">${v !== undefined ? v.toFixed(1) + '%' : '---'}</td>`;
             }
             html += `<td class="num highlight">${r.overall.toFixed(1)}%</td></tr>`;
