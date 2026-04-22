@@ -146,7 +146,13 @@
                 <div class="stats-row" id="class-stats"></div>
                 <div class="charts-grid">
                     <div class="card chart-card large"><div class="card-header"><h3>各科平均分</h3></div><div class="chart-container"><canvas id="chart-class-avg"></canvas></div></div>
-                    <div class="card chart-card"><div class="card-header"><h3>分數分佈</h3></div><div class="chart-container"><canvas id="chart-class-dist"></canvas></div></div>
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3>分數分佈</h3>
+                            <select id="class-dist-subject-select" class="select" style="min-width: 100px; padding: 4px 8px; font-size: 11px;"></select>
+                        </div>
+                        <div class="chart-container"><canvas id="chart-class-dist"></canvas></div>
+                    </div>
                     <div class="card chart-card"><div class="card-header"><h3>及格率</h3></div><div class="chart-container"><canvas id="chart-class-pass"></canvas></div></div>
                 </div>
                 <div class="card">

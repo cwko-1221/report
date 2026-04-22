@@ -9,9 +9,15 @@ const ClassView = {
         const gradeSelect = document.getElementById('class-grade-select');
         const yearSelect = document.getElementById('class-year-select');
         const termSelect = document.getElementById('class-term-select');
+        const distSelect = document.getElementById('class-dist-subject-select');
         gradeSelect.addEventListener('change', () => { this._updateYears(); this.render(); });
         yearSelect.addEventListener('change', () => { this._updateTerms(); this.render(); });
         termSelect.addEventListener('change', () => this.render());
+        if (distSelect) {
+            distSelect.addEventListener('change', () => {
+                if (this.currentRecord) this._renderDistChart(this.currentRecord);
+            });
+        }
     },
 
     refreshSelectors() {
@@ -57,6 +63,8 @@ const ClassView = {
         const rec = DataManager.getRecord(grade, year, term);
         if (!rec) { content.classList.add('hidden'); return; }
         content.classList.remove('hidden');
+
+        this.currentRecord = rec;
 
         this._renderStats(rec);
         this._renderAvgChart(rec);
@@ -159,8 +167,26 @@ const ClassView = {
         const ctx = document.getElementById('chart-class-dist');
         if (this.charts.dist) this.charts.dist.destroy();
 
-        // Distribution for the first numeric subject
-        const subj = rec.subjects.find(s => !s.isGrade && s.maxScore);
+        // Get all numeric subjects
+        const numSubjects = rec.subjects.filter(s => !s.isGrade && s.maxScore);
+        if (numSubjects.length === 0) return;
+
+        const select = document.getElementById('class-dist-subject-select');
+        let subjName = select ? select.value : '';
+
+        // If current selection is invalid or empty, default to 中文 or first available
+        if (!subjName || !numSubjects.find(s => s.name === subjName)) {
+            subjName = numSubjects.find(s => s.name === '中文')?.name || numSubjects[0].name;
+        }
+
+        // Update dropdown HTML
+        if (select) {
+            select.innerHTML = numSubjects.map(s => 
+                `<option value="${s.name}" ${s.name === subjName ? 'selected' : ''}>${s.name}</option>`
+            ).join('');
+        }
+
+        const subj = numSubjects.find(s => s.name === subjName);
         if (!subj) return;
 
         const brackets = [
