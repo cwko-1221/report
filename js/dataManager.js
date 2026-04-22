@@ -316,6 +316,29 @@ const DataManager = {
                 }
             }
 
+            // Fallback: Calculate dynamically if summary rows are missing from the file
+            for (const subj of subjects) {
+                if (classAverage[subj.name] === undefined && !subj.isGrade) {
+                    let sum = 0, count = 0;
+                    let max = -1, min = 99999;
+                    for (const st of students) {
+                        if (!st.hasScores) continue;
+                        const num = this.getNumericScore(st.scores[subj.name]?.total);
+                        if (num !== null) {
+                            sum += num;
+                            count++;
+                            if (num > max) max = num;
+                            if (num < min) min = num;
+                        }
+                    }
+                    if (count > 0) {
+                        classAverage[subj.name] = sum / count;
+                        if (classMax[subj.name] === undefined) classMax[subj.name] = max;
+                        if (classMin[subj.name] === undefined) classMin[subj.name] = min;
+                    }
+                }
+            }
+
             return {
                 filename,
                 sheetName,
