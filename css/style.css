@@ -299,6 +299,7 @@ a { color: var(--accent-cyan); text-decoration: none; }
 .filter-group { display: flex; flex-direction: column; gap: 4px; }
 .filter-group label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 .select {
+    color-scheme: dark; /* Force native dark UI for the dropdown */
     padding: 8px 14px;
     background: var(--bg-card);
     color: var(--text-primary);
@@ -316,17 +317,6 @@ a { color: var(--accent-cyan); text-decoration: none; }
     padding-right: 32px;
 }
 .select:focus { outline: none; border-color: var(--accent-indigo); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
-.select option {
-    background-color: #1E293B;
-    color: #F8FAFC;
-    padding: 8px 12px;
-}
-.select option:hover,
-.select option:focus,
-.select option:checked {
-    background-color: #0F172A;
-    color: #6366F1;
-}
 .select[multiple] {
     min-height: 120px;
     background-image: none;
