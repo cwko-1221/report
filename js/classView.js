@@ -159,7 +159,7 @@ const ClassView = {
                     datalabels: {
                         display: true,
                         color: '#F8FAFC',
-                        font: { weight: 'bold', size: 10 },
+                        font: { weight: 'bold', size: 13 },
                         formatter: val => val > 0 ? val.toFixed(1) + '%' : '',
                         anchor: 'end',
                         align: 'start',
@@ -239,7 +239,7 @@ const ClassView = {
                     datalabels: {
                         display: true,
                         color: '#F8FAFC',
-                        font: { weight: 'bold', size: 12 },
+                        font: { weight: 'bold', size: 14 },
                         formatter: (val, ctx) => val > 0 ? val : ''
                     }
                 },
@@ -287,7 +287,7 @@ const ClassView = {
                     datalabels: {
                         display: true,
                         color: '#F8FAFC',
-                        font: { weight: 'bold', size: 11 },
+                        font: { weight: 'bold', size: 13 },
                         formatter: val => val > 0 ? val.toFixed(1) + '%' : '',
                         anchor: 'end',
                         align: 'start',

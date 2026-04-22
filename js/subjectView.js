@@ -222,7 +222,7 @@ const SubjectView = {
                     datalabels: {
                         display: true,
                         color: '#F8FAFC',
-                        font: { weight: 'bold', size: 11 },
+                        font: { weight: 'bold', size: 13 },
                         formatter: val => val > 0 ? val : ''
                     }
                 },
