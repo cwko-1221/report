@@ -77,27 +77,37 @@ const ClassView = {
         const container = document.getElementById('class-stats');
         const numSubjects = rec.subjects.filter(s => !s.isGrade);
 
-        // Overall class average (as percentage)
-        let totalPct = 0, count = 0;
-        for (const subj of numSubjects) {
-            const avg = DataManager.getNumericScore(rec.classAverage[subj.name]);
-            if (avg !== null && subj.maxScore) {
-                totalPct += (avg / subj.maxScore) * 100;
-                count++;
+        // Overall class average (as weighted percentage)
+        let totalWeightedPct = 0, totalWeight = 0;
+        for (const student of rec.students) {
+            let sSum = 0, sWeight = 0;
+            for (const subj of numSubjects) {
+                const w = DataManager.getSubjectWeight(subj.name);
+                if (w === 0) continue;
+                const num = DataManager.getNumericScore(student.scores[subj.name]?.total);
+                if (num !== null && subj.maxScore) {
+                    sSum += (num / subj.maxScore) * 100 * w;
+                    sWeight += w;
+                }
+            }
+            if (sWeight > 0) {
+                totalWeightedPct += (sSum / sWeight);
+                totalWeight++;
             }
         }
-        const overallPct = count > 0 ? (totalPct / count).toFixed(1) : '---';
+        const overallPct = totalWeight > 0 ? (totalWeightedPct / totalWeight).toFixed(1) : '---';
 
-        // Top student
+        // Best student (overall average highest)
         let topStudent = '', topScore = 0;
         for (const student of rec.students) {
-            if (!student.hasScores) continue;
-            let sum = 0, c = 0;
+            let sum = 0, cWeight = 0;
             for (const subj of numSubjects) {
+                const w = DataManager.getSubjectWeight(subj.name);
+                if (w === 0) continue;
                 const num = DataManager.getNumericScore(student.scores[subj.name]?.total);
-                if (num !== null && subj.maxScore) { sum += (num / subj.maxScore * 100); c++; }
+                if (num !== null && subj.maxScore) { sum += (num / subj.maxScore * 100) * w; cWeight += w; }
             }
-            const avg = c > 0 ? sum / c : 0;
+            const avg = cWeight > 0 ? sum / cWeight : 0;
             if (avg > topScore) { topScore = avg; topStudent = student.name; }
         }
 
@@ -306,25 +316,29 @@ const ClassView = {
         const table = document.getElementById('class-ranking-table');
         const numSubjects = rec.subjects.filter(s => !s.isGrade);
 
-        // Calculate each student's overall percentage
+        // Calculate each student's overall weighted percentage
         const rankings = rec.students
             .filter(s => s.hasScores)
             .map(student => {
-                let sum = 0, count = 0;
+                let sum = 0, totalWeight = 0;
                 const subjScores = {};
                 for (const subj of numSubjects) {
                     const num = DataManager.getNumericScore(student.scores[subj.name]?.total);
                     if (num !== null && subj.maxScore) {
                         const pct = (num / subj.maxScore) * 100;
                         subjScores[subj.name] = pct;
-                        sum += pct;
-                        count++;
+                        
+                        const w = DataManager.getSubjectWeight(subj.name);
+                        if (w > 0) {
+                            sum += pct * w;
+                            totalWeight += w;
+                        }
                     }
                 }
                 return {
                     classNo: student.classNo,
                     name: student.name,
-                    overall: count > 0 ? sum / count : 0,
+                    overall: totalWeight > 0 ? sum / totalWeight : 0,
                     subjScores
                 };
             })

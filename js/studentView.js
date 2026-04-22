@@ -115,17 +115,19 @@ const StudentView = {
             const first = validRecords[0];
             const last = validRecords[validRecords.length - 1];
             const commonSubjects = first.subjects.filter(s => last.subjects.some(ls => ls.name === s.name));
-            let change = 0, count = 0;
+            let changeSum = 0, weightCount = 0;
             for (const subj of commonSubjects) {
+                const w = DataManager.getSubjectWeight(subj.name);
+                if (w === 0) continue;
                 const s1 = DataManager.getNumericScore(first.student.scores[subj.name]?.total);
                 const s2 = DataManager.getNumericScore(last.student.scores[subj.name]?.total);
                 if (s1 !== null && s2 !== null && subj.maxScore) {
-                    change += ((s2 - s1) / subj.maxScore) * 100;
-                    count++;
+                    changeSum += (((s2 - s1) / subj.maxScore) * 100) * w;
+                    weightCount += w;
                 }
             }
-            if (count > 0) {
-                const avgChange = change / count;
+            if (weightCount > 0) {
+                const avgChange = changeSum / weightCount;
                 const sign = avgChange > 0 ? '↑ +' : (avgChange < 0 ? '↓ ' : '');
                 trendText = sign + Math.abs(avgChange).toFixed(1) + '%';
             }

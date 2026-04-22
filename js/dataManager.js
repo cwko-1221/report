@@ -154,6 +154,15 @@ const DataManager = {
         };
     },
 
+    /** Get standard subject weight for overall calculations */
+    getSubjectWeight(subjName) {
+        if (['中文', '英文', '數學'].includes(subjName)) return 3;
+        if (subjName === '常識') return 2;
+        if (['小學人文', '小學科學'].includes(subjName)) return 1;
+        // Default minor subjects have no weight in overall academic performance unless explicitly stated
+        return 0;
+    },
+
     /** Get file list for data table */
     getFileList() {
         return this.records.map(r => ({
