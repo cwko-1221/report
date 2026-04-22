@@ -157,6 +157,7 @@ const ClassView = {
                 plugins: {
                     legend: { labels: { color: '#94A3B8', font: { size: 11 } } },
                     datalabels: {
+                        display: true,
                         color: '#F8FAFC',
                         font: { weight: 'bold', size: 10 },
                         formatter: val => val > 0 ? val.toFixed(1) + '%' : '',
@@ -236,6 +237,7 @@ const ClassView = {
                     legend: { position: 'right', labels: { color: '#94A3B8', font: { size: 11 }, padding: 12 } },
                     title: { display: true, text: `${subj.name} 分數分佈`, color: '#94A3B8', font: { size: 13 } },
                     datalabels: {
+                        display: true,
                         color: '#F8FAFC',
                         font: { weight: 'bold', size: 12 },
                         formatter: (val, ctx) => val > 0 ? val : ''
@@ -283,6 +285,7 @@ const ClassView = {
                     legend: { display: false },
                     tooltip: { callbacks: { label: ctx => `${ctx.parsed.x.toFixed(1)}%` } },
                     datalabels: {
+                        display: true,
                         color: '#F8FAFC',
                         font: { weight: 'bold', size: 11 },
                         formatter: val => val > 0 ? val.toFixed(1) + '%' : '',
