@@ -31,8 +31,24 @@ const SubjectView = {
         const grade = document.getElementById('subject-grade-select').value;
         const sel = document.getElementById('subject-year-select');
         const years = DataManager.getSchoolYears(grade);
-        sel.innerHTML = '<option value="">全部學年</option>';
+        const currentYear = sel.value;
+
+        sel.innerHTML = '';
+        if (grade) {
+            // Allow selecting all years ONLY if a specific grade is selected
+            sel.innerHTML += '<option value="">全部學年</option>';
+        }
+        
         for (const y of years) sel.innerHTML += `<option value="${y}">${y}</option>`;
+
+        // Restore previous selection if valid
+        if (currentYear && years.includes(currentYear)) {
+            sel.value = currentYear;
+        } else {
+            // Default: if class is specific, default to all years; else default to the latest year available
+            if (grade) sel.value = '';
+            else if (years.length > 0) sel.value = years[years.length - 1];
+        }
     },
 
     render() {
@@ -170,6 +186,9 @@ const SubjectView = {
         const ctx = document.getElementById('chart-subject-dist');
         if (this.charts.dist) this.charts.dist.destroy();
 
+        const gradeVal = document.getElementById('subject-grade-select').value;
+        const isAllGrades = !gradeVal;
+
         const brackets = ['90-100%', '80-89%', '70-79%', '60-69%', '50-59%', '<50%'];
         const bracketRanges = [[90, 101], [80, 90], [70, 80], [60, 70], [50, 60], [0, 50]];
         const colors = [CHART_COLORS[4], CHART_COLORS[0], CHART_COLORS[1], CHART_COLORS[2], CHART_COLORS[7], CHART_COLORS[3]];
@@ -200,7 +219,11 @@ const SubjectView = {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { labels: { color: '#94A3B8', font: { size: 10 } } } },
                 scales: {
-                    x: { stacked: true, ticks: { color: '#64748B', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: {
+                        stacked: true,
+                        ticks: { color: '#64748B', font: { size: 10 }, maxRotation: isAllGrades ? 90 : undefined, minRotation: isAllGrades ? 90 : undefined },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
                     y: { stacked: true, ticks: { color: '#64748B' }, grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: '人數', color: '#64748B' } }
                 }
             }
@@ -210,6 +233,9 @@ const SubjectView = {
     _renderAvgTrendChart(records, subjectName) {
         const ctx = document.getElementById('chart-subject-avg');
         if (this.charts.avgTrend) this.charts.avgTrend.destroy();
+
+        const gradeVal = document.getElementById('subject-grade-select').value;
+        const isAllGrades = !gradeVal;
 
         const labels = records.map(r => `${r.grade} ${r.termLabel}`);
         const avgData = records.map(rec => {
@@ -274,7 +300,10 @@ const SubjectView = {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { labels: { color: '#94A3B8', font: { size: 11 } } } },
                 scales: {
-                    x: { ticks: { color: '#64748B', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: {
+                        ticks: { color: '#64748B', font: { size: 10 }, maxRotation: isAllGrades ? 90 : undefined, minRotation: isAllGrades ? 90 : undefined },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
                     y: { min: 0, max: 100, ticks: { color: '#64748B', callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' } }
                 }
             }
