@@ -235,24 +235,104 @@ function showToast(message, type = 'info') {
 /* ---------- Initialize ---------- */
 document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
+    initAuth();
+
+    // Check if authenticated before fully loading data
+    if (sessionStorage.getItem('authenticated') === 'true') {
+        loadInitialData();
+    }
+});
+
+/** Form authentication lock */
+function initAuth() {
+    let overlay = document.getElementById('auth-overlay');
+    if (!overlay) {
+        // Fallback dynamically create HTML if heavily cached
+        overlay = document.createElement('div');
+        overlay.id = 'auth-overlay';
+        overlay.className = 'auth-overlay';
+        overlay.innerHTML = `
+        <div class="auth-box">
+            <div class="auth-icon">🔒</div>
+            <h2 class="auth-title">系統已鎖定</h2>
+            <p class="auth-desc">請輸入密碼以存取學生成績數據</p>
+            <form id="auth-form" class="auth-form">
+                <input type="password" id="auth-password" class="auth-input" placeholder="請輸入密碼..." autocomplete="off">
+                <button type="submit" class="auth-btn">解鎖</button>
+            </form>
+            <div id="auth-error" class="auth-error">密碼錯誤，請重新輸入</div>
+        </div>
+        `;
+        document.body.appendChild(overlay);
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+        .auth-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 9999; display: flex; justify-content: center; align-items: center; visibility: hidden; opacity: 0; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .auth-overlay.active { visibility: visible; opacity: 1; }
+        .auth-box { background: #1E293B; border: 1px solid #334155; border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); animation: slideUp 0.4s ease-out; }
+        .auth-icon { font-size: 48px; margin-bottom: 16px; }
+        .auth-title { font-size: 24px; font-weight: 700; color: #F8FAFC; margin-bottom: 8px; }
+        .auth-desc { color: #94A3B8; font-size: 14px; margin-bottom: 24px; }
+        .auth-form { display: flex; flex-direction: column; gap: 16px; }
+        .auth-input { width: 100%; padding: 14px 16px; background: #0F172A; border: 1px solid #334155; border-radius: 8px; color: #F8FAFC; font-size: 16px; text-align: center; letter-spacing: 2px; }
+        .auth-input:focus { outline: none; border-color: #6366F1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        .auth-btn { width: 100%; padding: 14px; background: #6366F1; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .auth-btn:hover { background: #4F46E5; }
+        .auth-error { color: #EF4444; font-size: 13px; margin-top: 16px; display: none; }
+        .auth-error.show { display: block; animation: shake 0.4s; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25%, 75% { transform: translateX(-5px); } 50% { transform: translateX(5px); } }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Use relative selectors to be perfectly bulletproof against cache mismatch IDs
+    const form = overlay.querySelector('form') || document.getElementById('auth-form');
+    const pwdInput = overlay.querySelector('input[type="password"]') || document.getElementById('auth-password');
+    const errorMsg = overlay.querySelector('.auth-error') || document.getElementById('auth-error');
+
+    if (sessionStorage.getItem('authenticated') !== 'true') {
+        overlay.classList.add('active');
+        pwdInput.focus();
+    }
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = pwdInput.value.trim();
+        
+        if (val === '29841189') {
+            sessionStorage.setItem('authenticated', 'true');
+            overlay.classList.remove('active');
+            errorMsg.classList.remove('show');
+            loadInitialData(); // Safely bootstrap the application now
+        } else {
+            errorMsg.classList.add('show');
+            pwdInput.value = '';
+            pwdInput.focus();
+            setTimeout(() => errorMsg.classList.remove('show'), 400);
+            setTimeout(() => {
+                if(sessionStorage.getItem('authenticated') !== 'true') errorMsg.classList.add('show');
+            }, 450);
+        }
+    });
+}
+
+/** Preload Data & Core Startup */
+function loadInitialData() {
     initUpload();
     initExport();
 
-    // Initialize view modules
     StudentView.init();
     ClassView.init();
     SubjectView.init();
     CompareView.init();
 
-    // Load cached data
     if (DataManager.loadFromStorage()) {
         refreshHomeView();
         showToast(`已載入 ${DataManager.records.length} 筆緩存數據`, 'info');
     }
 
-    // Auto-load preloaded data (from build_data.ps1)
     if (typeof PRELOAD_DATA !== 'undefined' && PRELOAD_DATA.length > 0) {
-        // Only load preload data if we don't already have it
         if (DataManager.records.length === 0) {
             console.time('Preload data parsing');
             const count = DataManager.parsePreloadData(PRELOAD_DATA);
@@ -263,4 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-});
+    
+    // Auto switch to student view on load exactly like the root behavior!
+    switchView('student');
+}
